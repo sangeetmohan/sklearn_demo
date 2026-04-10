@@ -110,3 +110,8 @@ y_pred_test_norm = regr.predict(X_test_norm)
 y_pred_test = (y_pred_test_norm * std_y) + mean_y
 
 print('Correct MSE: %.2f' % mean_squared_error(y_test, y_pred_test))
+
+plt.scatter(X_test, y_test, label='True')
+plt.scatter(X_test, y_pred_test, label='Predicted')
+plt.legend()
+plt.show()
