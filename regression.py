@@ -68,9 +68,45 @@ plt.scatter(X_test, y_test, color='red', label='Test data points')
 plt.plot(X_test, y_pred_test, color='blue', linewidth=1, label='Model')
 plt.scatter(X_test, y_pred_test, marker='x', color='red', linewidth=3, label='Test Pred.')
 plt.legend()
-plt.show()
+#plt.show()
+
 
 # Looking at the difference between the red x's (the model's predictions) 
 # and the red dots (the actual testing datapoints), you can visually confirm that the predictions are significantly off. 
 # This visual gap is exactly what the Mean Squared Error (MSE) measures, and it is why the r^2 score is negative. 
 # A good result would have the red x's sitting very close to the red dots, resulting in a positive r^2 close to +1
+
+
+# Model Normalization: a crucial step in ML
+# Normalizing your data meaning, scaling it down so all the numbers are on a similar playing field, is highly desirable, 
+# especially when you want to interpret the difference in effect between various model features. Use numpy for this.
+mean_X = np.mean(X_train, axis=0)
+std_X = np.std(X_train, axis=0)
+mean_y = np.mean(y)
+std_y = np.std(y)
+
+# Normalize the training data
+X_train_norm = (X_train - mean_X) / std_X
+y_train_norm = (y_train - mean_y) / std_y
+
+# Train the model on the normalized data
+regr = LinearRegression(fit_intercept=True)
+regr.fit(X_train_norm, y_train_norm)
+
+# Now that the model is trained on normalized data, it expects any new data to be normalized as well. 
+# The tutorial demonstrates what happens if you forget this rule by predicting directly on X_test
+y_pred_bad = regr.predict(X_test)
+print('Bad MSE: %.2f' % mean_squared_error(y_test, y_pred_bad))
+# The model is completely confused because it learned on small, scaled numbers but is being tested on large, raw numbers.
+
+# THE FIX
+# 1. Normalize the test input (just like we did the training data!)
+X_test_norm = (X_test - mean_X) / std_X
+
+# 2. Predict using the normalized test data
+y_pred_test_norm = regr.predict(X_test_norm)
+
+# 3. Unnormalize y after prediction!
+y_pred_test = (y_pred_test_norm * std_y) + mean_y
+
+print('Correct MSE: %.2f' % mean_squared_error(y_test, y_pred_test))
