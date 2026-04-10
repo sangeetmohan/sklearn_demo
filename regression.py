@@ -56,3 +56,21 @@ print("Predictions:", y_pred_test)
 # A perfect prediction would have an r^2 of 1.0.
 print('Mean squared error: %.2f' % mean_squared_error(y_test, y_pred_test))
 print('Coefficient of determination: %.2f' % r2_score(y_test, y_pred_test))
+
+# Plot outputs
+# This plots your actual, true data points on the graph. The training data (what the model learned from) will be black dots, 
+# and the test data (what we are evaluating on) will be red dots.
+plt.scatter(X_train, y_train, color='black', label='Train data points')
+plt.scatter(X_test, y_test, color='red', label='Test data points')
+
+# This draws the actual line of best fit (the y = mx + b equation) that your model calculated as a solid blue line.
+# And plots the model's guesses for the test data as red "x" marks.
+plt.plot(X_test, y_pred_test, color='blue', linewidth=1, label='Model')
+plt.scatter(X_test, y_pred_test, marker='x', color='red', linewidth=3, label='Test Pred.')
+plt.legend()
+plt.show()
+
+# Looking at the difference between the red x's (the model's predictions) 
+# and the red dots (the actual testing datapoints), you can visually confirm that the predictions are significantly off. 
+# This visual gap is exactly what the Mean Squared Error (MSE) measures, and it is why the r^2 score is negative. 
+# A good result would have the red x's sitting very close to the red dots, resulting in a positive r^2 close to +1
