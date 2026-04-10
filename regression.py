@@ -40,3 +40,19 @@ regr.fit(X_train, y_train)
 # .intercept is the 'b' for y = mx + b
 print('Coefficients:', regr.coef_)
 print('Intercept:', regr.intercept_)
+
+# Predict y for test (new) data points
+# regr.predict(X_test) gives the trained model unseen data (X_test)
+# it predicts the y-value for these x values by plugging into y = mx + b
+y_pred_test = regr.predict(X_test)
+print("Predictions shape:", y_pred_test.shape)
+print("Predictions:", y_pred_test)
+
+# Evaluating the model: MSE and r²
+# MSE calculates the distance between the predicted point and actual point. It squares those distances to remove negative
+# signs and heavily penalize huge errors, and finds the average. A lower MSE is better.
+
+# r^2 tells how much of the variance in the target variable is explained by your feature. 
+# A perfect prediction would have an r^2 of 1.0.
+print('Mean squared error: %.2f' % mean_squared_error(y_test, y_pred_test))
+print('Coefficient of determination: %.2f' % r2_score(y_test, y_pred_test))
