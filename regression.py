@@ -4,6 +4,7 @@ from sklearn import datasets
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
 
 # Import some real data
 X, y = datasets.load_diabetes(return_X_y=True)
@@ -78,20 +79,33 @@ plt.legend()
 
 
 # Model Normalization: a crucial step in ML
-# Normalizing your data meaning, scaling it down so all the numbers are on a similar playing field, is highly desirable, 
+# Normalizing your data, meaning, scaling it down so all the numbers are on a similar playing field, is highly desirable, 
 # especially when you want to interpret the difference in effect between various model features. Use numpy for this.
 mean_X = np.mean(X_train, axis=0)
 std_X = np.std(X_train, axis=0)
 mean_y = np.mean(y)
 std_y = np.std(y)
 
-# Normalize the training data
-X_train_norm = (X_train - mean_X) / std_X
-y_train_norm = (y_train - mean_y) / std_y
+# StandardScaler() packages all the math for mean, std into a single object that "remembers" the exact scaling parameters of 
+# your training data so you can perfectly apply them to your testing data.
+# Intialize scaler
+scaler = StandardScaler()
+
+# "Fit" the scaler to the training data (learn the mean/std) AND transform the data (scale it) in one step
+# Used only on training data
+X_train_norm = scaler.fit_transform(X_train)
 
 # Train the model on the normalized data
 regr = LinearRegression(fit_intercept=True)
-regr.fit(X_train_norm, y_train_norm)
+regr.fit(X_train_norm, y_train)
+
+# Transform the test data using the parameters learned in step 2
+# Used on testing data. Strictly applies the math it learned from the training set.
+X_test_norm = scaler.transform(X_test)
+
+# Predict and evaluate
+y_pred_test = regr.predict(X_test_norm)
+print('Clean Pipeline MSE: %.2f' % mean_squared_error(y_test, y_pred_test))
 
 # Now that the model is trained on normalized data, it expects any new data to be normalized as well. 
 # The tutorial demonstrates what happens if you forget this rule by predicting directly on X_test
